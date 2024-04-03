@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { UserButton } from "@clerk/nextjs";
+// import { Button } from "@/components/ui/button";
+// import { UserButton } from "@clerk/nextjs";
 
 export default function Home() {
   return (
     <>
     
-    <h2>amna</h2>
+    {/* <h2>amna</h2>
     <Button>Subscribe</Button>
-    <UserButton afterSignOutUrl="/" />
+    <UserButton afterSignOutUrl="/" /> */}
     </>
     
   );
