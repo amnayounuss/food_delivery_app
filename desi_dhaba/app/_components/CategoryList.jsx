@@ -10,10 +10,10 @@ function CategoryList() {
   const listRef = useRef(null);
   const [categoryList, setCategoryList] = useState([]);
   const params=useSearchParams();
-  const [selectedCategory,setSelectedCategory]=useState("all");
+  
 
   useEffect(()=>{
-    setSelectedCategory(params.get('category'));
+    console.log(params.get('category'));
   },[params])
 
   useEffect(() => {
@@ -44,7 +44,7 @@ function CategoryList() {
         {/* Use conditional rendering to check if categoryList is not empty */}
         {categoryList.length > 0 &&
           categoryList.map((Category, index) => (
-            <Link href={'category='+Category.slug} key={index} className={`flex flex-col items-center gap-2 border p-3 rounded-xl min-w-28 hover:border-primary hover:bg-orange-200 cursor-pointer group ${selectedCategory==Category.slug&&'text-primary border-primary bg-orange-50'}`}>
+            <Link href={'category='+Category.slug} key={index} className="flex flex-col items-center gap-2 border p-3 rounded-xl min-w-28 hover:border-primary hover:bg-orange-200 cursor-pointer group:">
               {/* Render Image component for each category */}
               <Image
                 src={Category.icon?.url}
