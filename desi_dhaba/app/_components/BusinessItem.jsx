@@ -1,10 +1,15 @@
 import Image from 'next/image'
 import React from 'react'
+import Link from "next/link";
+
 
 function BusinessItem({business}) {
   return (
     <>
-    <div className=''>
+    <Link 
+    href={`/restaurants/${business?.slug}`}
+    className='p-3 hover:border rounded-xl 
+    hover:border-primary transition-all hover:bg-orange-300 cursor-pointer'>
       <Image src={business.banner?.url} alt={business.name}
       width={500}
       height={130}
@@ -26,7 +31,7 @@ function BusinessItem({business}) {
             <h2>{business.categories?.[0]?.name}</h2>
           </div>
         </div>
-    </div>
+    </Link>
 
     
     </>

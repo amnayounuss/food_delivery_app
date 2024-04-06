@@ -9,8 +9,8 @@ function Header() {
     const { user, isSignedIn } = useUser();
 
     return (
-        <div className='flex justify-between items-center p-6 md:px-20 shadow-sm '>
-            <Image src="/logo.png" alt='logo' required width={100} height={100} />
+        <div className='flex justify-between items-center p-6 md:px-20 shadow-sm'>
+            <Image src="/logo.png" alt='logo' required width={200} height={100} className='-ml-20' />
 
             <div className='flex border p-2 rounded-lg bg-gray-200 w-96 h-10'>
                 <input type="text" className='bg-transparent w-full outline-none' />
