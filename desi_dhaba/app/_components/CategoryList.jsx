@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image"; // Import Image component from Next.js
 import { ArrowRightCircle } from "lucide-react";
@@ -9,12 +9,7 @@ import { useSearchParams } from "next/navigation";
 function CategoryList() {
   const listRef = useRef(null);
   const [categoryList, setCategoryList] = useState([]);
-  const params=useSearchParams();
-  
-
-  useEffect(()=>{
-    console.log(params.get('category'));
-  },[params])
+  const params = useSearchParams();
 
   useEffect(() => {
     getCategoryList();
@@ -23,7 +18,6 @@ function CategoryList() {
   // Function to get category list
   const getCategoryList = () => {
     GlobalApi.GetCategory().then((resp) => {
-      console.log(resp.categories);
       setCategoryList(resp.categories);
     });
   };
@@ -44,7 +38,7 @@ function CategoryList() {
         {/* Use conditional rendering to check if categoryList is not empty */}
         {categoryList.length > 0 &&
           categoryList.map((Category, index) => (
-            <Link href={'category='+Category.slug} key={index} className="flex flex-col items-center gap-2 border p-3 rounded-xl min-w-28 hover:border-primary hover:bg-orange-200 cursor-pointer group:">
+            <Link href={`/?category=${Category.slug}`} key={index} className="flex flex-col items-center gap-2 border p-3 rounded-xl min-w-28 hover:border-primary hover:bg-orange-200 cursor-pointer group:">
               {/* Render Image component for each category */}
               <Image
                 src={Category.icon?.url}
