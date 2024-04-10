@@ -1,14 +1,21 @@
-import React from 'react'
-import Header from './_components/Header'
+"use client"
+import React, { useState } from 'react';
+import Header from './_components/Header';
+import { Toaster } from '@/components/ui/sonner';
+import { CartUpdateContext } from './_context/CartUpdateContext';
 
-function Provider({children}) {
+function Provider({ children }) {
+  const [updateCart, setUpdateCart] = useState(false);
+
   return (
-    <div className='px-10 md:px-20 relative'>
-        <Header/>
+    <CartUpdateContext.Provider value={{ updateCart, setUpdateCart }}>
+      <div className='px-10 md:px-20 relative'>
+        <Header />
+        <Toaster />
         {children}
-      
-    </div>
-  )
+      </div>
+    </CartUpdateContext.Provider>
+  );
 }
 
-export default Provider
+export default Provider;

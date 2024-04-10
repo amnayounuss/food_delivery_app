@@ -7,13 +7,13 @@ import RestroTabs from '../_components/RestroTabs';
 
 function RestaurantDetails() {
 
-  const param=usePathname(); //show current path name
-  const [restaurant,setRestaurant]=useState([])
-  useEffect(()=>{
+  const param = usePathname(); //show current path name
+  const [restaurant, setRestaurant] = useState([])
+  useEffect(() => {
     GetRestaurantDetail(param.split("/")[2])
   }, [])
-  const GetRestaurantDetail=(restroSlug)=>{
-    GlobalApi.GetBusinessDetail(restroSlug).then(resp=>{
+  const GetRestaurantDetail = (restroSlug) => {
+    GlobalApi.GetBusinessDetail(restroSlug).then(resp => {
       console.log(resp)
       setRestaurant(resp.restaurant);
     })
@@ -22,8 +22,13 @@ function RestaurantDetails() {
 
   return (
     <div>
+<<<<<<< HEAD
     <Intro restaurant={restaurant}/>
     <RestroTabs restaurant={restaurant}/>
+=======
+      <Intro restaurant={restaurant} />
+      <RestroTabs restaurant={restaurant} />
+>>>>>>> be0aaf183b40ec329ea35f9d8df38fb66e438ec1
     </div>
   )
 }
