@@ -2,22 +2,34 @@ import { Button } from '@/components/ui/button';
 import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
 import { Search, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CartUpdateContext } from '../_context/CartUpdateContext';
 import GlobalApi from '../_utils/GlobalApi';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import Cart from './Cart';
+
 
 function Header() {
+    
     const { user, isSignedIn } = useUser();
     const { updateCart } = useContext(CartUpdateContext);
+    const [cart, setCart] = useState([]);
 
     useEffect(() => {
         console.log("Execute Me!");
-    }, [updateCart]);
+        user && GetUserCart(); // Ensure both user and updateCart are truthy
+    }, [updateCart, user]); // Corrected dependency array syntax
 
-    const GetUserCart=()=>{
-        GlobalApi.GetUserCart().then((resp) => {
-            console.log(resp)
-    })
+    const GetUserCart = () => {
+        GlobalApi.GetUserCart(user?.primaryEmailAddress.emailAddress).then((resp) => {
+            console.log(resp);
+            setCart(resp?.userCarts);
+        });
+    }; // Added missing closing brace
 
     return (
         <div className='flex justify-between items-center p-6 md:px-20 shadow-sm'>
@@ -28,10 +40,21 @@ function Header() {
             </div>
             {isSignedIn ? (
                 <div className='flex gap-x-2 items-center'>
-                    <div className='flex gap-x-2 items-center'>
-                        <ShoppingCart />
-                        <label className='p-1 px-2 rounded-full bg-slate-200'>0</label>
-                    </div>
+
+                    <Popover>
+                        <PopoverTrigger asChild>                    
+                        <div className='flex gap-x-2 items-center cursor-pointer'>
+                            <ShoppingCart />
+                            <label className='p-1 px-3 rounded-full bg-slate-200'>
+                                {cart?.length}
+                            </label>
+                        </div>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                            <Cart cart={cart} />
+                        </PopoverContent>
+                    </Popover>
+
                     <UserButton />
                 </div>
             ) : (

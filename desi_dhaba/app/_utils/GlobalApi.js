@@ -94,7 +94,9 @@ const AddToCart=async(data)=>{
   const query=gql`
  mutation AddToCart {
   createUserCart(
-    data: {email: "`+ data?.email + `", price: "` + data.price + `", productDescription: "` + data.description + `", productImage: "` + data.productImage + `", productName: "` + data.name +`"}
+    data: {email: "`+ data?.email + `", price: "` + data.price + `", productDescription: "` + data.description + `", productImage: "` + data.productImage + `", 
+    productName: "` + data.name +`"
+    restaurant: {connect: {slug: "`+data.restaurantSlug+`"}}}
   ) {
     id
   }
@@ -118,6 +120,13 @@ const GetUserCart =async(userEmail)=>{
     productDescription
     productImage
     productName
+       restaurant {
+      name
+      banner {
+        url
+      }
+      slug
+    }
   }
 }
 
