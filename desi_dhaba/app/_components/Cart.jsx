@@ -2,6 +2,8 @@ import React from 'react';
 import Image from 'next/image';
 import { X } from "lucide-react";
 import { Button } from '@/components/ui/button';
+import GlobalApi from '../_utils/GlobalApi';
+import { toast } from '@/components/ui/use-toast';
 
 
 function Cart({ cart }) {
@@ -12,6 +14,19 @@ function Cart({ cart }) {
       total += parseFloat(item.price);
     })
     return total.toFixed(2);
+  }
+
+  const RemoveItemFromCart=(id)=>{
+    GlobalApi.DisconnectRestroFromUserCartItem(id).then(resp=>{
+      console.log(resp);
+      if(resp)
+      {
+        GlobalApi.DeleteItemFromCart(id).then(resp=>{
+          console.log(resp);
+          toast('Item Removed!')
+        })
+      }
+    })
   }
 
 
@@ -33,7 +48,8 @@ function Cart({ cart }) {
             <h2>{item.productName}</h2>
             </div>
             <h2 className='font-bold mt-3 flex gap-2'>${item.price}
-            <X className='h-4 w-4 text-red-600' />
+            <X className='h-4 w-4 text-red-500'
+            onClick={()=>RemoveItemFromCart(item.id)} />
             </h2>
           </div>
         ))}

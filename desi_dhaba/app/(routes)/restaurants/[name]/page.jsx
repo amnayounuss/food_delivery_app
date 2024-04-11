@@ -22,13 +22,9 @@ function RestaurantDetails() {
 
   return (
     <div>
-<<<<<<< HEAD
-    <Intro restaurant={restaurant}/>
-    <RestroTabs restaurant={restaurant}/>
-=======
+
       <Intro restaurant={restaurant} />
       <RestroTabs restaurant={restaurant} />
->>>>>>> be0aaf183b40ec329ea35f9d8df38fb66e438ec1
     </div>
   )
 }
