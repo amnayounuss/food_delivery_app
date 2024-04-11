@@ -14,7 +14,7 @@ import Cart from './Cart';
 
 
 function Header() {
-    
+
     const { user, isSignedIn } = useUser();
     const { updateCart } = useContext(CartUpdateContext);
     const [cart, setCart] = useState([]);
@@ -50,7 +50,7 @@ function Header() {
                             </label>
                         </div>
                         </PopoverTrigger>
-                        <PopoverContent>
+                        <PopoverContent className='w-full'>
                             <Cart cart={cart} />
                         </PopoverContent>
                     </Popover>
