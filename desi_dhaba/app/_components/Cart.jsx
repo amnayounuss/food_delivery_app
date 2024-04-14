@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Image from 'next/image';
 import { X } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import GlobalApi from '../_utils/GlobalApi';
 import { toast } from '@/components/ui/use-toast';
+import { CartUpdateContext } from '../_context/CartUpdateContext';
 
 
 function Cart({ cart }) {
+  const { updateCart, setUpdateCart } = useContext(CartUpdateContext);
   const calculateCartAmount =()=>{
     let total = 0;
     cart.forEach((item) => {
@@ -24,6 +26,7 @@ function Cart({ cart }) {
         GlobalApi.DeleteItemFromCart(id).then(resp=>{
           console.log(resp);
           toast('Item Removed!')
+          setUpdateCart(!updateCart)
         })
       }
     })

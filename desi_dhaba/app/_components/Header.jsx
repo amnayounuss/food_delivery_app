@@ -16,7 +16,7 @@ import Cart from './Cart';
 function Header() {
 
     const { user, isSignedIn } = useUser();
-    const { updateCart } = useContext(CartUpdateContext);
+    const { updateCart,setUpdateCart } = useContext(CartUpdateContext);
     const [cart, setCart] = useState([]);
 
     useEffect(() => {
