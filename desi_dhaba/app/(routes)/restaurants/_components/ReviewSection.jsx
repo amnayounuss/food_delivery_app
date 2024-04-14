@@ -6,21 +6,22 @@ import { useUser } from '@clerk/nextjs';
 import GlobalApi from '@/app/_utils/GlobalApi';
 import { toast } from 'sonner';
 
-function ReviewSection(restaurant) {
+function ReviewSection({restaurant}) {
     const [rating, setRating] = useState(0)
     const [reviewText, setReviewText] = useState();
     const { user } = useUser();
 
     const handleSubmit=()=>{
         const data = {
-            email: user.primaryEmailAddress.emailAddress,
+          email:user.primaryEmailAddress.emailAddress,
+          profileImage:user?.imageUrl,
+          userName:user?.fullName,
+          star:rating,
+          reviewText:reviewText,
+          RestroSlug: restaurant.slug
            
-            profileImage: user?.imageUrl,
-            userName:user?.fullName,
-            star:rating,
-            reviewText:reviewText,
-            RestroSlug:restaurant.slug
         };
+        console.log(data);
 
         GlobalApi.AddNewReview(data).then(resp=>{
           console.log(resp);
