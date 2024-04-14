@@ -29,7 +29,7 @@ function Header() {
             console.log(resp);
             setCart(resp?.userCarts);
         });
-    }; // Added missing closing brace
+    }; 
 
     return (
         <div className='flex justify-between items-center p-6 md:px-20 shadow-sm'>

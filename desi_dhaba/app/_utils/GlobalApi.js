@@ -38,6 +38,9 @@ const GetBusiness = async(category) => {
     restoType
     slug
     workingHours
+    review {
+      star
+    }
   }
 }
 
@@ -81,6 +84,10 @@ const GetBusinessDetail = async(businessSlug) => {
           }
         }
       }
+      
+    }
+    review {
+      star
     }
   }
 }
@@ -187,13 +194,14 @@ const AddNewReview = async (data) => {
 const getRestaurantReviews= async(slug)=>{
   const query = gql `
   query RestaurantReviews {
-    reviews(where: {restaurant: {slug: "`+slug+`"}}) {
+    reviews(where: {restaurant: {slug: "`+ slug +`"}},orderBy: publishedAt_DESC) {
       email
       id
       profileImage
       publishedAt
       userName
       star
+      reviewText
     }
   }
   `

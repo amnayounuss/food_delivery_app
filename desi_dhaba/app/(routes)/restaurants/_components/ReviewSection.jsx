@@ -31,6 +31,7 @@ function ReviewSection({restaurant}) {
         GlobalApi.AddNewReview(data).then(resp=>{
           console.log(resp);
           toast('Review Added!!')
+          resp&&getReviewList();
         })
 
     }

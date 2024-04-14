@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import GlobalApi from '../_utils/GlobalApi';
 import { toast } from '@/components/ui/use-toast';
 import { CartUpdateContext } from '../_context/CartUpdateContext';
+import Link from 'next/link';
 
 
 function Cart({ cart }) {
@@ -56,7 +57,9 @@ function Cart({ cart }) {
             </h2>
           </div>
         ))}
+        <Link href={'/checkout?restaurant=' + cart[0]?.restaurant?.name} className='w-full'>
         <Button className='w-full mt-4'> ${calculateCartAmount()} Checkout  Now</Button>
+        </Link>
       </div>
     </div>
   );
