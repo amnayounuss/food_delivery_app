@@ -12,7 +12,10 @@ function Checkout() {
   const {user}=useUser();
   const [cart, setCart] = useState([]);
   const { updateCart, setUpdateCart } = useContext(CartUpdateContext);
+  const [ deliveryAmount, setDeliveryAmount ] = useState(5);
   const [Subtotal,setSubTotal]=useState(0);
+  const [taxAmount,setTaxAmount]=useState(0);
+  const [total,setTotal]=useState(0);
   useEffect(() => {
     console.log(params.get('restaurant'));
     user&&GetUserCart();
@@ -32,7 +35,9 @@ function Checkout() {
       total += parseFloat(item.price);
 
     })
-    setSubTotal(total);
+    setSubTotal(total.toFixed(2));
+    setTaxAmount(total * 0.9);
+    setTotal(total+total*0.9+deliveryAmount.toFixed(2)) ;
   }
   return (
     <div className='flex flex-col md:flex-row'>
@@ -60,20 +65,20 @@ function Checkout() {
             Subtotal
             
             <hr className='w-1/2' />
-            <span>{Subtotal} $</span>
+            <span> ${Subtotal} </span>
           </h2>
           <h2 className='flex justify-between'>
             Delivery:
-            <span>--</span>
+            <span>${deliveryAmount}</span>
           </h2>
           <h2 className='flex justify-between'>
             Tax (9%):
-            <span>--</span>
+            <span>${taxAmount.toFixed(2)}</span>
           </h2>
           <hr className='w-full' />
           <h2 className='font-bold flex justify-between '>
             Total:
-            <span>--</span>
+            <span>${total.toFixed(2)}</span>
             {/* <Button onClick={() => onApprove({ paymentId: 123 })}>Pay</Button> */}
           </h2>
         </div>
