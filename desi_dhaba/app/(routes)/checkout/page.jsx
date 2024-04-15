@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useUser } from '@clerk/nextjs';
 import { useSearchParams } from 'next/navigation'
 import React, { useContext, useEffect, useState } from 'react'
+import { motion } from "framer-motion"
 
 function Checkout() {
   const params = useSearchParams();
@@ -30,6 +31,7 @@ function Checkout() {
 
   const calculateTotalAmount=(cart_)=>{
     let total=0;
+   let sum = 0;
     cart_.forEach((item)=>{
       // total=total+item.price;
       total += parseFloat(item.price);
@@ -37,7 +39,13 @@ function Checkout() {
     })
     setSubTotal(total.toFixed(2));
     setTaxAmount(total * 0.9);
-    setTotal(total+total*0.9+deliveryAmount.toFixed(2)) ;
+     sum = (total + total * 0.9 + deliveryAmount).toFixed(2);
+    setTotal(sum) ;
+
+  }
+
+  const addToOrder=()=>{
+
   }
   return (
     <div className='flex flex-col md:flex-row'>
@@ -78,9 +86,11 @@ function Checkout() {
           <hr className='w-full' />
           <h2 className='font-bold flex justify-between '>
             Total:
-            <span>${total.toFixed(2)}</span>
+            <span>${total}</span>
             {/* <Button onClick={() => onApprove({ paymentId: 123 })}>Pay</Button> */}
+           
           </h2>
+          <Button onClick={() => addToOrder()} >Make Payment</Button>
         </div>
       </div>
     </div>
