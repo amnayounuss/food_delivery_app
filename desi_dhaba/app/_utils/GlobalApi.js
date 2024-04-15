@@ -234,7 +234,7 @@ const UpdateOrderToAddOrderItems=async(name,price,id,email)=>{
   const query=gql`
   mutation UpdateOrderWithDetail {
   updateOrder(
-    data: {orderDetail: {create: {OrderItem: {name: "`+name+`", price: "`+price+`"}}}}
+    data: {orderDetail: {create: {OrderItem: {name: "`+name+`", price: "`+price+`", }}}}
     where: {id: "`+id+`"}
   ) {
     id
@@ -245,6 +245,7 @@ const UpdateOrderToAddOrderItems=async(name,price,id,email)=>{
     deleteManyUserCarts(where: {email: "`+email+`"}) {
       count
     }
+
   
   
 }

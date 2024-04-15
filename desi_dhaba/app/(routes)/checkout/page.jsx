@@ -13,30 +13,33 @@ import { toast } from 'sonner';
 function Checkout() {
   const params = useSearchParams();
   const { user } = useUser();
-  const [cart, setCart] = useState([]);
   const { updateCart, setUpdateCart } = useContext(CartUpdateContext);
+  const [cart, setCart] = useState([]);
   const [deliveryAmount, setDeliveryAmount] = useState(5);
   const [subtotal, setSubTotal] = useState(0);
   const [taxAmount, setTaxAmount] = useState(0);
   const [total, setTotal] = useState(0);
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [zip, setZip] = useState('');
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log(params.get('restaurant'));
     user && GetUserCart();
-  }, [user || updateCart]);
+  }, [user, updateCart]);
 
   const GetUserCart = () => {
-    GlobalApi.GetUserCart(user?.primaryEmailAddress.emailAddress).then((resp) => {
-      console.log(resp);
-      setCart(resp?.userCarts);
-      calculateTotalAmount(resp?.userCarts);
-    });
+    GlobalApi.GetUserCart(user?.primaryEmailAddress.emailAddress)
+      .then((resp) => {
+        console.log(resp);
+        setCart(resp?.userCarts);
+        calculateTotalAmount(resp?.userCarts);
+      })
+      .catch((error) => {
+        console.error('Error fetching user cart:', error);
+      });
   };
 
   const calculateTotalAmount = (cart_) => {
@@ -46,39 +49,55 @@ function Checkout() {
       total += parseFloat(item.price);
     });
     setSubTotal(total.toFixed(2));
-    setTaxAmount(total * 0.9);
-    sum = (total + total * 0.9 + deliveryAmount).toFixed(2);
+    setTaxAmount(total * 0.09);
+    sum = (total + total * 0.09 + deliveryAmount).toFixed(2);
     setTotal(sum);
   };
 
   const addToOrder = () => {
-    setLoading(true)
+    setLoading(true);
     const data = {
       email: user.primaryEmailAddress.emailAddress,
       orderAmount: total,
-      restaurantName: params.get("restaurant"),
+      restaurantName: params.get('restaurant'),
       userName: name,
       phone: phone,
       address: address,
-      zipCode: zip
+      zipCode: zip,
     };
-    GlobalApi.CreateNewOrder(data).then(resp => {
-      const resultID = resp?.createOrder?.id;
-      if(resultID)
-      {
-        cart.forEach((item)=>{
-          GlobalApi.UpdateOrderToAddOrderItems(item.productName,user?.primaryEmailAddress.emailAddress, item.price,  resultID).then(result=>{
-            console.log(result);
-            setLoading(false);
-            toast('Order Crested Successfully');
-          },(error)=>{
-            setLoading(false)
-          })
-        })
-      }
-    }, (error)=>{
-      setLoading(false)
-    });
+    GlobalApi.CreateNewOrder(data)
+      .then((resp) => {
+        const resultID = resp?.createOrder?.id;
+        if (resultID) {
+          Promise.all(
+            cart.map((item) =>
+              GlobalApi.UpdateOrderToAddOrderItems(
+                item.productName,
+                user?.primaryEmailAddress.emailAddress,
+                item.price,
+                resultID
+              )
+            )
+          )
+            .then((results) => {
+              console.log(results);
+              toast('Order Created Successfully!!!');
+              setUpdateCart(!updateCart);
+            })
+            .catch((error) => {
+              console.error('Error updating order with order items:', error);
+              toast.error('Error creating order. Please try again later.');
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error('Error creating order:', error);
+        toast.error('Error creating order. Please try again later.');
+        setLoading(false);
+      });
   };
 
   return (
@@ -88,15 +107,32 @@ function Checkout() {
         <div className='p-5 px-5 md:px-10'>
           <h2 className='font-bold text-3xl'>Billing Details</h2>
           <div className='grid grid-cols-2 gap-10 mt-3'>
-            <Input placeholder='Name' className='border col-span-1' value={name} onChange={(e) => setName(e.target.value)} />
-            <Input placeholder='Email' className='border col-span-1' value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              placeholder='Name'
+              className='border col-span-1'
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <Input
+              placeholder='Phone'
+              className='border col-span-1'
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
           </div>
           <div className='grid grid-cols-2 gap-10 mt-3'>
-            <Input placeholder='Phone' className='border col-span-1' value={phone} onChange={(e) => setPhone(e.target.value)} />
-            <Input placeholder='Zip' className='border col-span-1' value={zip} onChange={(e) => setZip(e.target.value)} />
-          </div>
-          <div className='mt-3'>
-            <Input placeholder='Address' className='border' value={address} onChange={(e) => setAddress(e.target.value)} />
+            <Input
+              placeholder='Zip'
+              className='border col-span-1'
+              value={zip}
+              onChange={(e) => setZip(e.target.value)}
+            />
+            <Input
+              placeholder='Address'
+              className='border col-span-1'
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
           </div>
         </div>
       </div>
@@ -105,7 +141,6 @@ function Checkout() {
         <div className='p-4 flex flex-col gap-4'>
           <h2 className='font-bold flex justify-between'>
             Subtotal
-            <hr className='w-1/2' />
             <span> ${subtotal} </span>
           </h2>
           <h2 className='flex justify-between'>
@@ -122,12 +157,12 @@ function Checkout() {
             <span>${total}</span>
           </h2>
           <Button onClick={() => addToOrder()}>
-          {loading?<Loader className='animate-spin'/>:'Make Payment'}
+            {loading ? <Loader className='animate-spin' /> : 'Make Payment'}
           </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default Checkout;
