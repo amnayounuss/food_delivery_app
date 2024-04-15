@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { Rating as ReactRating } from '@smastrom/react-rating'
 import React from 'react'
-import moment from 'moment/moment'
+import moment from 'moment'
 
 function ReviewList({ reviewList }) {
   return (

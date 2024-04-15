@@ -4,8 +4,10 @@ import GlobalApi from '@/app/_utils/GlobalApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@clerk/nextjs';
+import { Loader } from 'lucide-react';
 import { useSearchParams } from 'next/navigation'
 import React, { useContext, useEffect, useState } from 'react'
+import { toast } from 'sonner';
 
 
 function Checkout() {
@@ -22,6 +24,7 @@ function Checkout() {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [zip, setZip] = useState('');
+  const [loading,setLoading]=useState(false)
 
   useEffect(() => {
     console.log(params.get('restaurant'));
@@ -49,6 +52,7 @@ function Checkout() {
   };
 
   const addToOrder = () => {
+    setLoading(true)
     const data = {
       email: user.primaryEmailAddress.emailAddress,
       orderAmount: total,
@@ -59,7 +63,21 @@ function Checkout() {
       zipCode: zip
     };
     GlobalApi.CreateNewOrder(data).then(resp => {
-      console.log(resp.createOrder.id);
+      const resultID = resp?.createOrder?.id;
+      if(resultID)
+      {
+        cart.forEach((item)=>{
+          GlobalApi.UpdateOrderToAddOrderItems(item.productName,user?.primaryEmailAddress.emailAddress, item.price,  resultID).then(result=>{
+            console.log(result);
+            setLoading(false);
+            toast('Order Crested Successfully');
+          },(error)=>{
+            setLoading(false)
+          })
+        })
+      }
+    }, (error)=>{
+      setLoading(false)
     });
   };
 
@@ -103,7 +121,9 @@ function Checkout() {
             Total:
             <span>${total}</span>
           </h2>
-          <Button onClick={() => addToOrder()}>Make Payment</Button>
+          <Button onClick={() => addToOrder()}>
+          {loading?<Loader className='animate-spin'/>:'Make Payment'}
+          </Button>
         </div>
       </div>
     </div>

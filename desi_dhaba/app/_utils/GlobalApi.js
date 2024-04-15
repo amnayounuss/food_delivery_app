@@ -230,7 +230,7 @@ mutation CreateNewOrder {
 
 };
 
-const UpdateOrderToAddOrderItems=async(name,price,id)=>{
+const UpdateOrderToAddOrderItems=async(name,price,id,email)=>{
   const query=gql`
   mutation UpdateOrderWithDetail {
   updateOrder(
@@ -239,6 +239,14 @@ const UpdateOrderToAddOrderItems=async(name,price,id)=>{
   ) {
     id
   }
+  publishManyOrders(to: PUBLISHED) {
+    count
+  }
+    deleteManyUserCarts(where: {email: "`+email+`"}) {
+      count
+    }
+  
+  
 }
 
   `
