@@ -6,47 +6,63 @@ import { Input } from '@/components/ui/input';
 import { useUser } from '@clerk/nextjs';
 import { useSearchParams } from 'next/navigation'
 import React, { useContext, useEffect, useState } from 'react'
-import { motion } from "framer-motion"
+
 
 function Checkout() {
   const params = useSearchParams();
-  const {user}=useUser();
+  const { user } = useUser();
   const [cart, setCart] = useState([]);
   const { updateCart, setUpdateCart } = useContext(CartUpdateContext);
-  const [ deliveryAmount, setDeliveryAmount ] = useState(5);
-  const [Subtotal,setSubTotal]=useState(0);
-  const [taxAmount,setTaxAmount]=useState(0);
-  const [total,setTotal]=useState(0);
+  const [deliveryAmount, setDeliveryAmount] = useState(5);
+  const [subtotal, setSubTotal] = useState(0);
+  const [taxAmount, setTaxAmount] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [zip, setZip] = useState('');
+
   useEffect(() => {
     console.log(params.get('restaurant'));
-    user&&GetUserCart();
-  }, [user||updateCart]);
+    user && GetUserCart();
+  }, [user || updateCart]);
+
   const GetUserCart = () => {
     GlobalApi.GetUserCart(user?.primaryEmailAddress.emailAddress).then((resp) => {
       console.log(resp);
       setCart(resp?.userCarts);
       calculateTotalAmount(resp?.userCarts);
     });
-  }; 
+  };
 
-  const calculateTotalAmount=(cart_)=>{
-    let total=0;
-   let sum = 0;
-    cart_.forEach((item)=>{
-      // total=total+item.price;
+  const calculateTotalAmount = (cart_) => {
+    let total = 0;
+    let sum = 0;
+    cart_.forEach((item) => {
       total += parseFloat(item.price);
-
-    })
+    });
     setSubTotal(total.toFixed(2));
     setTaxAmount(total * 0.9);
-     sum = (total + total * 0.9 + deliveryAmount).toFixed(2);
-    setTotal(sum) ;
+    sum = (total + total * 0.9 + deliveryAmount).toFixed(2);
+    setTotal(sum);
+  };
 
-  }
+  const addToOrder = () => {
+    const data = {
+      email: user.primaryEmailAddress.emailAddress,
+      orderAmount: total,
+      restaurantName: params.get("restaurant"),
+      userName: name,
+      phone: phone,
+      address: address,
+      zipCode: zip
+    };
+    GlobalApi.CreateNewOrder(data).then(resp => {
+      console.log(resp.createOrder.id);
+    });
+  };
 
-  const addToOrder=()=>{
-
-  }
   return (
     <div className='flex flex-col md:flex-row'>
       <div className='w-full md:w-1/2'>
@@ -54,26 +70,25 @@ function Checkout() {
         <div className='p-5 px-5 md:px-10'>
           <h2 className='font-bold text-3xl'>Billing Details</h2>
           <div className='grid grid-cols-2 gap-10 mt-3'>
-            <Input placeholder='Name' className='border col-span-1' onChange={(e) => setUsername(e.target.value)} />
-            <Input placeholder='Email' className='border col-span-1' onChange={(e) => setEmail(e.target.value)} />
+            <Input placeholder='Name' className='border col-span-1' value={name} onChange={(e) => setName(e.target.value)} />
+            <Input placeholder='Email' className='border col-span-1' value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
           <div className='grid grid-cols-2 gap-10 mt-3'>
-            <Input placeholder='Phone' className='border col-span-1' onChange={(e) => setPhone(e.target.value)} />
-            <Input placeholder='Zip' className='border col-span-1' onChange={(e) => setZip(e.target.value)} />
+            <Input placeholder='Phone' className='border col-span-1' value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <Input placeholder='Zip' className='border col-span-1' value={zip} onChange={(e) => setZip(e.target.value)} />
           </div>
           <div className='mt-3'>
-            <Input placeholder='Address' className='border' onChange={(e) => setAddress(e.target.value)} />
+            <Input placeholder='Address' className='border' value={address} onChange={(e) => setAddress(e.target.value)} />
           </div>
         </div>
       </div>
       <div className='w-full md:w-[30%] border ml-0 md:ml-80 mt-5 md:mt-20'>
         <h2 className='p-3 bg-gray-200 font-bold text-center'>Total Cart ({cart?.length})</h2>
         <div className='p-4 flex flex-col gap-4'>
-          <h2 className='font-bold flex justify-between '>
+          <h2 className='font-bold flex justify-between'>
             Subtotal
-            
             <hr className='w-1/2' />
-            <span> ${Subtotal} </span>
+            <span> ${subtotal} </span>
           </h2>
           <h2 className='flex justify-between'>
             Delivery:
@@ -84,17 +99,15 @@ function Checkout() {
             <span>${taxAmount.toFixed(2)}</span>
           </h2>
           <hr className='w-full' />
-          <h2 className='font-bold flex justify-between '>
+          <h2 className='font-bold flex justify-between'>
             Total:
             <span>${total}</span>
-            {/* <Button onClick={() => onApprove({ paymentId: 123 })}>Pay</Button> */}
-           
           </h2>
-          <Button onClick={() => addToOrder()} >Make Payment</Button>
+          <Button onClick={() => addToOrder()}>Make Payment</Button>
         </div>
       </div>
     </div>
   )
 }
 
-export default Checkout
+export default Checkout;
