@@ -1,68 +1,49 @@
-// import { Button, Html } from "@react-email/components";
-import * as React from "react";
-import { Tailwind } from "@react-email/components";
+import * as React from 'react';
+import { Html } from '@react-email/html';
+import { Button } from '@react-email/button';
 
-export default function Email() {
+export function Email(props) {
+  const { url } = props;
+
   return (
-    <Tailwind
-      config={{
-        theme: {
-          extend: {
-            colors: {
-              brand: "#007291",
-            },
-          },
-        },
-      }}
-      >
-    <div class="bg-white border rounded-lg shadow-lg px-6 py-8 max-w-md mx-auto mt-8">
-    <h1 class="font-bold text-2xl my-4 text-center text-blue-600">KRP Services</h1>
-    <hr class="mb-2"/>
-    <div class="flex justify-between mb-6">
-        <h1 class="text-lg font-bold">Invoice</h1>
-        <div class="text-gray-700">
-            <div>Date: 01/05/2023</div>
-            <div>Invoice #: INV12345</div>
+    <Html lang="en">
+      <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: '0 auto' }}>
+        <h2 style={{ backgroundColor: '#f7f7f7', padding: '10px', textAlign: 'center' }}>Food Order Confirmation</h2>
+        <p style={{ fontWeight: 'bold', textAlign: 'center' }}>Thank you for your order!</p>
+        <p>Your order has been confirmed and will be delivered shortly.</p>
+        
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <tr>
+            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Item</th>
+            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Quantity</th>
+            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Price</th>
+          </tr>
+          <tr>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>Chicken Burger</td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>2</td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>$10.00</td>
+          </tr>
+          <tr>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>Pizza Margherita</td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>1</td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>$12.00</td>
+          </tr>
+        </table>
+        
+        <p style={{ fontWeight: 'bold' }}>Total: $22.00</p>
+        
+        <h3>Delivery Information</h3>
+        <p>Address: 123 Main St, City, State, ZIP</p>
+        <p>Contact: (123) 456-7890</p>
+        
+        <div style={{ backgroundColor: '#f7f7f7', padding: '10px', textAlign: 'center' }}>
+          <p>Thank you for choosing our service!</p>
+          <p>For any inquiries, please contact us at <a href="mailto:support@example.com">support@example.com</a>.</p>
         </div>
-    </div>
-    <div class="mb-8">
-        <h2 class="text-lg font-bold mb-4">Bill To:</h2>
-        <div class="text-gray-700 mb-2">John Doe</div>
-        <div class="text-gray-700 mb-2">123 Main St.</div>
-        <div class="text-gray-700 mb-2">Anytown, USA 12345</div>
-        <div class="text-gray-700">johndoe@example.com</div>
-    </div>
-    <table class="w-full mb-8">
-        <thead>
-            <tr>
-                <th class="text-left font-bold text-gray-700">Description</th>
-                <th class="text-right font-bold text-gray-700">Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="text-left text-gray-700">Product 1</td>
-                <td class="text-right text-gray-700">$100.00</td>
-            </tr>
-            <tr>
-                <td class="text-left text-gray-700">Product 2</td>
-                <td class="text-right text-gray-700">$50.00</td>
-            </tr>
-            <tr>
-                <td class="text-left text-gray-700">Product 3</td>
-                <td class="text-right text-gray-700">$75.00</td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr>
-                <td class="text-left font-bold text-gray-700">Total</td>
-                <td class="text-right font-bold text-gray-700">$225.00</td>
-            </tr>
-        </tfoot>
-    </table>
-    <div class="text-gray-700 mb-2">Thank you for your business!</div>
-    <div class="text-gray-700 text-sm">Please remit payment within 30 days.</div>
-</div>
-</Tailwind>
+      </div>
+      <Button href={url}>Click me</Button>
+    </Html>
   );
 }
+
+export default Email;
