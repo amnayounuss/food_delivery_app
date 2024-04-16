@@ -1,12 +1,13 @@
-"use client"
+"use client";
 import { CartUpdateContext } from '@/app/_context/CartUpdateContext';
 import GlobalApi from '@/app/_utils/GlobalApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@clerk/nextjs';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 import { Loader } from 'lucide-react';
-import { useSearchParams } from 'next/navigation'
-import React, { useContext, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 
@@ -20,11 +21,12 @@ function Checkout() {
   const [taxAmount, setTaxAmount] = useState(0);
   const [total, setTotal] = useState(0);
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [zip, setZip] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const router=useRouter();
 
   useEffect(() => {
     user && GetUserCart();
@@ -55,9 +57,10 @@ function Checkout() {
   };
 
   const addToOrder = () => {
+    console.log('Adding to order...');
     setLoading(true);
     const data = {
-      email: user.primaryEmailAddress.emailAddress,
+      email: email,
       orderAmount: total,
       restaurantName: params.get('restaurant'),
       userName: name,
@@ -67,26 +70,42 @@ function Checkout() {
     };
     GlobalApi.CreateNewOrder(data)
       .then((resp) => {
+        console.log('Order created:', resp);
         const resultID = resp?.createOrder?.id;
         if (resultID) {
-          Promise.all(
-            cart.map((item) =>
-              GlobalApi.UpdateOrderToAddOrderItems(
-                item.productName,
-                user?.primaryEmailAddress.emailAddress,
-                item.price,
-                resultID
-              )
-            )
-          )
-            .then((results) => {
-              console.log(results);
+          // Promises array to store delete cart item promises
+          const deletePromises = [];
+          cart.forEach((item) => {
+            // Add order items
+            GlobalApi.UpdateOrderToAddOrderItems(
+              item.productName,
+              item.price,
+              resultID,
+              email
+            ).then(
+              (result) => {
+                console.log('Order item added:', result);
+              },
+              (error) => {
+                console.error(
+                  'Error updating order with order items:',
+                  error
+                );
+              }
+            );
+            // Delete cart items
+            deletePromises.push(GlobalApi.DeleteItemFromCart(item.id));
+          });
+          // Execute delete promises
+          Promise.all(deletePromises)
+            .then(() => {
+              console.log('Cart items deleted successfully.');
               toast('Order Created Successfully!!!');
               setUpdateCart(!updateCart);
+              router.replace('/confirmation');
             })
             .catch((error) => {
-              console.error('Error updating order with order items:', error);
-              toast.error('Error creating order. Please try again later.');
+              console.error('Error deleting cart items:', error);
             })
             .finally(() => {
               setLoading(false);
@@ -96,9 +115,12 @@ function Checkout() {
       .catch((error) => {
         console.error('Error creating order:', error);
         toast.error('Error creating order. Please try again later.');
-        setLoading(false);
       });
   };
+
+ 
+
+
 
   return (
     <div className='flex flex-col md:flex-row'>
@@ -114,22 +136,30 @@ function Checkout() {
               onChange={(e) => setName(e.target.value)}
             />
             <Input
+              placeholder='Email'
+              className='border col-span-1'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className='grid grid-cols-2 gap-10 mt-3'>
+            <Input
               placeholder='Phone'
               className='border col-span-1'
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
-          </div>
-          <div className='grid grid-cols-2 gap-10 mt-3'>
             <Input
               placeholder='Zip'
               className='border col-span-1'
               value={zip}
               onChange={(e) => setZip(e.target.value)}
             />
+          </div>
+          <div className='mt-3'>
             <Input
               placeholder='Address'
-              className='border col-span-1'
+              className='border'
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
@@ -137,7 +167,9 @@ function Checkout() {
         </div>
       </div>
       <div className='w-full md:w-[30%] border ml-0 md:ml-80 mt-5 md:mt-20'>
-        <h2 className='p-3 bg-gray-200 font-bold text-center'>Total Cart ({cart?.length})</h2>
+        <h2 className='p-3 bg-gray-200 font-bold text-center'>
+          Total Cart ({cart?.length})
+        </h2>
         <div className='p-4 flex flex-col gap-4'>
           <h2 className='font-bold flex justify-between'>
             Subtotal
@@ -156,9 +188,26 @@ function Checkout() {
             Total:
             <span>${total}</span>
           </h2>
-          <Button onClick={() => addToOrder()}>
+          {/* <Button onClick={() => addToOrder()}>
             {loading ? <Loader className='animate-spin' /> : 'Make Payment'}
-          </Button>
+          </Button> */}
+         {total>5 && <PayPalButtons
+          disabled={!(name&&email&&address&&zip&&phone)||loading}
+           style={{ layout: "horizontal" }}
+            onApprove={addToOrder}
+            createOrder={(data,action)=>{
+              return action.order.create({
+                purchase_units:[
+                  {
+                    amount:{
+                      value:total,
+                      currency_code:'USD'
+                    }
+                  }
+                ]
+              })
+            }} />
+          }
         </div>
       </div>
     </div>

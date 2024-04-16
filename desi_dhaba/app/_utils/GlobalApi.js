@@ -223,6 +223,9 @@ mutation CreateNewOrder {
   ) {
     id
   }
+   publishManyOrders(to: PUBLISHED) {
+    count
+  }
 }
   `
   const result = await request(MASTER_URL, query);
