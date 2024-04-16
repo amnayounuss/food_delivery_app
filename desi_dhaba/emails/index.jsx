@@ -1,8 +1,20 @@
 // import { Button, Html } from "@react-email/components";
 import * as React from "react";
+import { Tailwind } from "@react-email/components";
 
 export default function Email() {
   return (
+    <Tailwind
+      config={{
+        theme: {
+          extend: {
+            colors: {
+              brand: "#007291",
+            },
+          },
+        },
+      }}
+      >
     <div class="bg-white border rounded-lg shadow-lg px-6 py-8 max-w-md mx-auto mt-8">
     <h1 class="font-bold text-2xl my-4 text-center text-blue-600">KRP Services</h1>
     <hr class="mb-2"/>
@@ -51,5 +63,6 @@ export default function Email() {
     <div class="text-gray-700 mb-2">Thank you for your business!</div>
     <div class="text-gray-700 text-sm">Please remit payment within 30 days.</div>
 </div>
+</Tailwind>
   );
 }
