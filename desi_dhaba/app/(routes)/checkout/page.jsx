@@ -10,7 +10,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-
 function Checkout() {
   const params = useSearchParams();
   const { user } = useUser();
@@ -26,7 +25,7 @@ function Checkout() {
   const [address, setAddress] = useState('');
   const [zip, setZip] = useState('');
   const [loading, setLoading] = useState(false);
-  const router=useRouter();
+  const router = useRouter();
 
   useEffect(() => {
     user && GetUserCart();
@@ -118,9 +117,25 @@ function Checkout() {
       });
   };
 
- 
-
-
+  const SendEmail = async () => {
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: user?.primaryEmailAddress.emailAddress })
+      })
+      if (!response.ok) {
+        toast('error')
+      }
+      else {
+        toast('email sent')
+      }
+    } catch (err) {
+      toast('ERROR')
+    }
+  };
 
   return (
     <div className='flex flex-col md:flex-row'>
@@ -188,20 +203,20 @@ function Checkout() {
             Total:
             <span>${total}</span>
           </h2>
-          {/* <Button onClick={() => addToOrder()}>
+          <Button onClick={() => SendEmail()}>
             {loading ? <Loader className='animate-spin' /> : 'Make Payment'}
-          </Button> */}
-         {total>5 && <PayPalButtons
-          disabled={!(name&&email&&address&&zip&&phone)||loading}
-           style={{ layout: "horizontal" }}
+          </Button>
+          {total > 5 && <PayPalButtons
+            disabled={!(name && email && address && zip && phone) || loading}
+            style={{ layout: "horizontal" }}
             onApprove={addToOrder}
-            createOrder={(data,action)=>{
+            createOrder={(data, action) => {
               return action.order.create({
-                purchase_units:[
+                purchase_units: [
                   {
-                    amount:{
-                      value:total,
-                      currency_code:'USD'
+                    amount: {
+                      value: total,
+                      currency_code: 'USD'
                     }
                   }
                 ]
