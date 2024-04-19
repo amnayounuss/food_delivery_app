@@ -52,7 +52,7 @@ function ReviewSection({restaurant}) {
             <Button disabled={rating==0||!reviewText}
               onClick={()=>handleSubmit()}
             >Submit</Button>
-        </div>
+        </div>            
         <div className='col-span-2'>
             <ReviewList reviewList={reviewList}/>
         </div>

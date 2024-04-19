@@ -101,6 +101,7 @@ function Checkout() {
               console.log('Cart items deleted successfully.');
               toast('Order Created Successfully!!!');
               setUpdateCart(!updateCart);
+              SendEmail();
               router.replace('/confirmation');
             })
             .catch((error) => {
@@ -127,13 +128,13 @@ function Checkout() {
         body: JSON.stringify({ email: user?.primaryEmailAddress.emailAddress })
       })
       if (!response.ok) {
-        toast('error')
+        toast('Error while sending email  ')
       }
       else {
         toast('email sent')
       }
     } catch (err) {
-      toast('ERROR')
+      toast('Error while sending email')
     }
   };
 
@@ -203,9 +204,9 @@ function Checkout() {
             Total:
             <span>${total}</span>
           </h2>
-          <Button onClick={() => SendEmail()}>
+          {/* <Button onClick={() => SendEmail()}>
             {loading ? <Loader className='animate-spin' /> : 'Make Payment'}
-          </Button>
+          </Button> */}
           {total > 5 && <PayPalButtons
             disabled={!(name && email && address && zip && phone) || loading}
             style={{ layout: "horizontal" }}
