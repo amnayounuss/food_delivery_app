@@ -204,9 +204,9 @@ function Checkout() {
             Total:
             <span>${total}</span>
           </h2>
-          {/* <Button onClick={() => SendEmail()}>
+          <Button onClick={() => SendEmail()}>
             {loading ? <Loader className='animate-spin' /> : 'Make Payment'}
-          </Button> */}
+          </Button>
           {total > 5 && <PayPalButtons
             disabled={!(name && email && address && zip && phone) || loading}
             style={{ layout: "horizontal" }}
