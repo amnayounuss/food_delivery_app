@@ -204,7 +204,7 @@ function Checkout() {
             Total:
             <span>${total}</span>
           </h2>
-          <Button onClick={() => SendEmail()}>
+          <Button onClick={() => addToOrder()}>
             {loading ? <Loader className='animate-spin' /> : 'Make Payment'}
           </Button>
           {total > 5 && <PayPalButtons
