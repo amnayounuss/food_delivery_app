@@ -5,7 +5,7 @@ import Link from 'next/link';
 function BusinessItem({ business }) {
   const calculateRating = () => {
     let total = 0;
-    let count = 0;
+    let count = 0;  
     business?.review.forEach(item => {
       total = total + item.star;
       count++;
