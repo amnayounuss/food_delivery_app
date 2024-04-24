@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
+import { SignInButton, SignOutButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
 import { Search, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import React, { useContext, useEffect, useState } from 'react';
@@ -44,12 +44,12 @@ function Header() {
 
     return (
         <div className='flex justify-between items-center p-6 md:px-20 shadow-sm'>
-        <Link href={'/'} >
-            <Image src="/logo.png" alt='logo' required width={250} height={150} className='-ml-20' />
-        </Link>
+            <Link href={'/?category=all'} >
+                <Image src="/logo.png" alt='logo' required width={250} height={150} className='-ml-20' />
+            </Link>
             <div className='flex border p-2 rounded-lg bg-gray-200 w-96 h-10'>
-                <input type="text" className='bg-transparent w-full outline-none' />
-                <Search />
+                <input type="text" className='bg-transparent w-full outline-none' placeholder='Search' />
+                <Search  />
             </div>
             {isSignedIn ? (
                 <div className='flex gap-x-2 items-center'>
@@ -81,8 +81,8 @@ function Header() {
                             <DropdownMenuLabel>My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <Link href={'/user'} ><DropdownMenuItem>Profile</DropdownMenuItem> </Link>
-                            <DropdownMenuItem>My Order</DropdownMenuItem>
-                            <DropdownMenuItem>Logout</DropdownMenuItem>
+                            <Link href={'/user#/my-orders'}><DropdownMenuItem>My Order</DropdownMenuItem></Link>
+                            <DropdownMenuItem><SignOutButton>Logout</SignOutButton></DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
 
